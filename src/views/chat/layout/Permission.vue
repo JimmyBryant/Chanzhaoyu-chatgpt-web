@@ -1,7 +1,7 @@
 <script setup lang='ts'>
 import { computed, ref } from 'vue'
 import { NButton, NInput, NModal, useMessage } from 'naive-ui'
-import { fetchVerify } from '@/api'
+import { login } from '@/api'
 import { useAuthStore } from '@/store'
 import Icon403 from '@/icons/403.vue'
 
@@ -16,22 +16,23 @@ const authStore = useAuthStore()
 const ms = useMessage()
 
 const loading = ref(false)
+const username = ref('')
+const password = ref('')
 const token = ref('')
 
-const disabled = computed(() => !token.value.trim() || loading.value)
+const disabled = computed(() => !username.value.trim() || !password.value.trim() || loading.value)
 
 async function handleVerify() {
-  const secretKey = token.value.trim()
-
-  if (!secretKey)
+  const name = username.value.trim()
+  const pwd = password.value.trim()
+  if (!name || !pwd)
     return
 
   try {
     loading.value = true
-    await fetchVerify(secretKey)
-    authStore.setToken(secretKey)
+    const data: any = await login(name, pwd)
+    authStore.setToken(data.data.access_token)
     ms.success('success')
-    window.location.reload()
   }
   catch (error: any) {
     ms.error(error.message ?? 'error')
@@ -64,7 +65,8 @@ function handlePress(event: KeyboardEvent) {
           </p>
           <Icon403 class="w-[200px] m-auto" />
         </header>
-        <NInput v-model:value="token" type="password" placeholder="" @keypress="handlePress" />
+        <NInput v-model:value="username" type="input" placeholder="输入用户名 默认是手机号" @keypress="handlePress" />
+        <NInput v-model:value="password" type="password" placeholder="输入密码" @keypress="handlePress" />
         <NButton
           block
           type="primary"
@@ -72,7 +74,7 @@ function handlePress(event: KeyboardEvent) {
           :loading="loading"
           @click="handleVerify"
         >
-          {{ $t('common.verify') }}
+          登录
         </NButton>
       </div>
     </div>

@@ -49,3 +49,14 @@ export function fetchVerify<T>(token: string) {
     data: { token },
   })
 }
+
+export function login<T = any>(username: string, password: string) {
+  const headers = {
+    'Content-Type': 'application/x-www-form-urlencoded',
+  }
+  return post<T>({
+    url: '/access_token',
+    data: { username, password },
+    headers,
+  })
+}
