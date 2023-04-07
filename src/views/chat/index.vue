@@ -24,7 +24,7 @@ const openLongReply = import.meta.env.VITE_GLOB_OPEN_LONG_REPLY === 'true'
 const route = useRoute()
 const dialog = useDialog()
 const ms = useMessage()
-
+const chatToken = 0
 const chatStore = useChatStore()
 
 useCopyCode()
@@ -515,6 +515,9 @@ onUnmounted(() => {
     </main>
     <footer :class="footerClass">
       <div class="w-full max-w-screen-xl m-auto">
+        <div style="text-align:right;color:#b5b5b5;">
+          <label>上次消耗<span class="mx-1">{{ chatToken }}</span>Token</label>
+        </div>
         <div class="flex items-center justify-between space-x-2">
           <HoverButton @click="handleClear">
             <span class="text-xl text-[#4f555e] dark:text-white">
