@@ -515,7 +515,7 @@ onUnmounted(() => {
     </main>
     <footer :class="footerClass">
       <div class="w-full max-w-screen-xl m-auto">
-        <div style="text-align:right;color:#b5b5b5;">
+        <div class="text-right text-[#b5b5b5]">
           <label>上次消耗<span class="mx-1">{{ chatToken }}</span>Token</label>
         </div>
         <div class="flex items-center justify-between space-x-2">
