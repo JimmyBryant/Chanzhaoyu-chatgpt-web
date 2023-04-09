@@ -117,10 +117,16 @@ async function onConversation() {
           const xhr = event.target
           const { responseText } = xhr
           // Always process the final line
-          const lastIndex = responseText.lastIndexOf('\n', responseText.length - 2)
+          const lastEventIndex = responseText.lastIndexOf('event:', responseText.length - 2)
+          const lastDataIndex = responseText.lastIndexOf('data:', responseText.length - 2)
           let chunk = responseText
-          if (lastIndex !== -1)
-            chunk = responseText.substring(lastIndex)
+          let eventType = 'message'
+          if (lastDataIndex !== -1) {
+            chunk = responseText.substring(lastDataIndex + 5).trim()
+            eventType = responseText.substring(lastEventIndex + 6, lastDataIndex).trim()
+          }
+          if (eventType === 'close')
+            return
           try {
             const data = JSON.parse(chunk)
             updateChat(
@@ -136,7 +142,7 @@ async function onConversation() {
                 requestOptions: { prompt: message, options: { ...options } },
               },
             )
-
+            lastText += data.text
             if (openLongReply && data.detail.choices[0].finish_reason === 'length') {
               options.parentMessageId = data.id
               lastText = data.text
@@ -147,7 +153,7 @@ async function onConversation() {
             scrollToBottomIfAtBottom()
           }
           catch (error) {
-            //
+            // console.log(error)
           }
         },
       })

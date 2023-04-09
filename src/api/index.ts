@@ -1,5 +1,5 @@
 import type { AxiosProgressEvent, GenericAbortSignal } from 'axios'
-import { post } from '@/utils/request'
+import { get, post } from '@/utils/request'
 import { useSettingStore } from '@/store'
 
 export function fetchChatAPI<T = any>(
@@ -29,9 +29,10 @@ export function fetchChatAPIProcess<T = any>(
 ) {
   const settingStore = useSettingStore()
 
-  return post<T>({
-    url: '/chat-process',
-    data: { prompt: params.prompt, options: params.options, systemMessage: settingStore.systemMessage },
+  return get<T>({
+    url: '/dialogue/stream',
+    // data: { prompt: params.prompt, options: params.options, systemMessage: settingStore.systemMessage },
+    data: { text: params.prompt, conversation_id: 1, dialogue_order: 24, systemMessage: settingStore.systemMessage },
     signal: params.signal,
     onDownloadProgress: params.onDownloadProgress,
   })
@@ -55,8 +56,8 @@ export function login<T = any>(username: string, password: string) {
     'Content-Type': 'application/x-www-form-urlencoded',
   }
   return post<T>({
-    url: '/access_token',
-    data: { username, password },
+    url: '/token',
+    data: { phone: username, password, verification: 'a', captchaId: 'a' },
     headers,
   })
 }
